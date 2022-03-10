@@ -5,17 +5,27 @@ const URL ='http://localhost/shoppinglist_backend/'
 
 
 function App() {
-  const [item, setItem] = useState('')
-  const [amount, setAmount] = useState('')
+  const [item, setItem] = useState({
+    description:'',
+    amount:''
+  });
   const [items, setItems] = useState([])
   useEffect(() => {
   axios.get(URL).then((response)=>{
-    console.log(response.data);
     setItems(response.data)
   }).catch(error=>{
     alert(error.response ? error.response.data.error:error)
   })
   }, [])
+
+
+  function inputChange(e){
+    const value = e.target.value;
+    setItem({
+      ...item,
+      [e.target.name]:value
+    });
+  }
 
   function save(e){
     e.preventDefault()
@@ -28,7 +38,6 @@ function App() {
     .then((response)=>{
       setItems(items=>[...items,response.data])
       setItem('')
-      setAmount(amount)
     }).catch(error=>{
       alert(error.response ? error.response.data.error:error)
     })
@@ -52,8 +61,8 @@ axios.post(URL+'delete.php',json,{
       <form onSubmit={save}>
         <h2>Shopping list Pauli Haarnio</h2>
         <label>New item</label>
-        <input value={item.description} placeholder='Add a new item' onChange={e=>setItem(e.target.value)}></input>
-        <input value={item.amount} placeholder='Add amount' onChange={e=>setAmount(e.target.value)}></input>
+        <input name='description' value={item.description} placeholder='Add a new item' onChange={inputChange}></input>
+        <input name='amount' value={item.amount} placeholder='Add amount' onChange={inputChange}></input>
         <button>Add</button>
       </form>
       <ol>
